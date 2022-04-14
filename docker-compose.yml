@@ -1,0 +1,13 @@
+version: '3'
+services:
+  upload-example:
+    build:
+      context: .
+    container_name: upload-example
+    image: upload-example
+    stop_signal: SIGINT
+    restart: always
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/src/upload-example
