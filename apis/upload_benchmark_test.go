@@ -31,7 +31,7 @@ func setupBenchmark(b *testing.B) (*cloudStorageClientMock, *Service, *httptest.
 func BenchmarkUploadingAPITest(b *testing.B) {
 	cloudStorageClient, service, w := setupBenchmark(b)
 	// assume that the cloudstorage take 01 seconds to hanlde the request.
-	cloudStorageClient.On("Upload", mock.Anything, mock.Anything).After(1 * time.Second).Return(nil)
+	cloudStorageClient.On("Upload", anyBytes, mock.Anything).After(1 * time.Second).Return(nil)
 	// Make same payload for every request
 	payload, err := ioutil.ReadFile("./data-test/payload.json")
 	if err != nil {

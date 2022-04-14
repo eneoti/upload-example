@@ -23,6 +23,8 @@ func GetCloudStorage(storageType string, logger logger.Logger) (ICloudStorage, e
 	return nil, fmt.Errorf("wrong storage type passed")
 }
 
+// This Engine will handle the uploading to S3/GCS.
+// It support ratelimit following S3 and GCS
 type CSEngine struct {
 	cloudstorageClient interface{}
 	logger             logger.Logger
@@ -53,6 +55,7 @@ func (w *CSEngine) GetRateLimit() ratelimit.Limiter {
 
 	}
 }
+
 func (w *CSEngine) GetGCSType() string {
 	switch w.cloudstorageClient.(type) {
 	default:
@@ -70,6 +73,7 @@ func (w *CSEngine) Do(buffer []byte, fileName string) {
 	rl.Take()
 	go func() {
 		err := w.cloudstorageClient.(ICloudStorage).Upload(buffer, fileName)
+		// log when got the error from S3/GCS
 		if err == nil {
 			w.logger.Infof("Upload %v to %v sucessfully ", fileName, w.GetGCSType())
 		}
