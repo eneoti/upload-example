@@ -49,5 +49,5 @@ Use the https://github.com/uber-go/zap
 ```
 ### Explaination
 1. Apply the RateLimit when uploading to S3,GCS:
-	This code set ratelimit = 10 as default. Please reference the [this link](https://aws.amazon.com/premiumsupport/knowledge-center/s3-503-within-request-rate-prefix/).
+	This code set the ratelimit = 10 as default. Please reference the [this link](https://aws.amazon.com/premiumsupport/knowledge-center/s3-503-within-request-rate-prefix/) to have the ratelimit information when working with AWS.
 
