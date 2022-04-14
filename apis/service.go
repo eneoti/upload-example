@@ -21,10 +21,10 @@ const (
 )
 
 type Service struct {
-	mu                 sync.Mutex
-	httpServer         http.Server
-	logger             logger.Logger
-	cloudstorageClient cloudstorage.ICloudStorage
+	mu         sync.Mutex
+	httpServer http.Server
+	logger     logger.Logger
+	csEngine   *cloudstorage.CSEngine
 }
 type PayloadItem struct {
 	Timestamp   time.Time   `json:"timestamp" validate:"required"`
@@ -38,23 +38,14 @@ type Payload struct {
 	Batch []PayloadItem `json:"batch" validate:"required,dive,required"`
 }
 
-func NewService(logger logger.Logger, cloudstorageClient cloudstorage.ICloudStorage) (*Service, error) {
+func NewService(logger logger.Logger, cloudstorageClient interface{}) (*Service, error) {
+	csEngine, _ := cloudstorage.NewCSEngine(logger, cloudstorageClient)
 	service := &Service{
-		logger:             logger,
-		cloudstorageClient: cloudstorageClient,
+		logger:   logger,
+		csEngine: csEngine,
 	}
 	// Init routing
 	routing := http.NewServeMux()
-
-	// Healthz API
-	routing.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodGet {
-			w.Write([]byte("health check\n"))
-			return
-		}
-
-		http.Error(w, "Not Found", http.StatusNotFound)
-	})
 
 	// Uploading data API
 	routing.HandleFunc("/user/batch", service.uploadingData)
@@ -89,11 +80,11 @@ func (s *Service) Shutdown() error {
 func (s *Service) uploadingData(w http.ResponseWriter, r *http.Request) {
 	s.mu.Lock()
 	defer func() {
-		s.logger.Infow("Finish uploading data")
+		s.logger.Debugw("Finish uploading data")
 		s.mu.Unlock()
 	}()
 
-	s.logger.Infow("Uploading data is begining")
+	s.logger.Debugw("Uploading data is begining")
 	if r.Method != http.MethodPost {
 		http.Error(w, "Not Found", http.StatusNotFound)
 		return
@@ -121,8 +112,5 @@ func (s *Service) uploadingData(w http.ResponseWriter, r *http.Request) {
 	// Upload the payload to cloud storage (S3)
 	fileName := fmt.Sprintf("user-%s-%v", uuid.New().String(), time.Now().Format("2006-01-02T15:04:05"))
 	buffer, _ := ioutil.ReadAll(r.Body)
-	if err := s.cloudstorageClient.Upload(buffer, fileName); err != nil {
-		s.logger.Infow("Uploading to cloudstorage", "error", err)
-		http.Error(w, "Internal Error", http.StatusInternalServerError)
-	}
+	s.csEngine.Do(buffer, fileName)
 }

@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"testing"
+	"time"
 	"upload-example/lib/logger"
 
 	"github.com/stretchr/testify/assert"
@@ -36,8 +37,12 @@ func setup(t *testing.T) (*cloudStorageClientMock, *Service, *httptest.ResponseR
 	return cloudStorageClient, service, w
 }
 
-// Test the uploading API to be failed when the cloud storage has problem.
-func TestPostUploadingData_Failed_Due2StorageCloud(t *testing.T) {
+var anyBytes = mock.MatchedBy(func(buffer []byte) bool {
+	return true
+})
+
+// Test the uploading API to be sucessfully when the cloud storage has problem.
+func TestPostUploadingData_Sucess_EvenStorageCloudProblem(t *testing.T) {
 	cloudStorageClient, service, w := setup(t)
 
 	data, err := os.Open("./data-test/payload.json")
@@ -49,14 +54,14 @@ func TestPostUploadingData_Failed_Due2StorageCloud(t *testing.T) {
 	assert.Nil(t, err)
 	req.Header.Set("Content-Type", "application/json")
 
-	cloudStorageClient.On("Upload", mock.Anything, mock.Anything).Return(
+	cloudStorageClient.On("Upload", anyBytes, mock.Anything).Return(
 		errors.New("uploading error"),
 	)
 
 	service.httpServer.Handler.ServeHTTP(w, req)
 
-	assert.Equal(t, 500, w.Code)
-	assert.Equal(t, "Internal Error\n", w.Body.String())
+	time.Sleep(100 * time.Millisecond)
+	assert.Equal(t, 200, w.Code)
 
 	cloudStorageClient.AssertExpectations(t)
 }
@@ -74,7 +79,7 @@ func TestPostUpoadingData_Failed_Due2InvalidBody(t *testing.T) {
 	assert.Nil(t, err)
 	req.Header.Set("Content-Type", "application/json")
 
-	cloudStorageClient.AssertNotCalled(t, "Upload", mock.Anything, mock.Anything)
+	cloudStorageClient.AssertNotCalled(t, "Upload", anyBytes, mock.Anything)
 
 	service.httpServer.Handler.ServeHTTP(w, req)
 
@@ -95,7 +100,7 @@ func TestPostUpoadingData_Failed_Due2Exceed10KB(t *testing.T) {
 	assert.Nil(t, err)
 	req.Header.Set("Content-Type", "application/json")
 
-	cloudStorageClient.AssertNotCalled(t, "Upload", mock.Anything, mock.Anything)
+	cloudStorageClient.AssertNotCalled(t, "Upload", anyBytes, mock.Anything)
 	service.httpServer.Handler.ServeHTTP(w, req)
 	assert.Equal(t, 400, w.Code)
 	assert.Equal(t, "Can not decode the payload\n", w.Body.String())
@@ -115,10 +120,10 @@ func TestPostUpoadingData_Success(t *testing.T) {
 	assert.Nil(t, err)
 	req.Header.Set("Content-Type", "application/json")
 
-	cloudStorageClient.On("Upload", mock.Anything, mock.Anything).Return(nil)
+	cloudStorageClient.On("Upload", anyBytes, mock.Anything).Return(nil)
 
 	service.httpServer.Handler.ServeHTTP(w, req)
-
+	time.Sleep(100 * time.Millisecond)
 	assert.Equal(t, 200, w.Code)
 
 	cloudStorageClient.AssertExpectations(t)

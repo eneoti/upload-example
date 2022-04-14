@@ -9,9 +9,9 @@ import (
 )
 
 const (
-	Email      = "admin@upload-example.com"
+	GCS_Email  = "admin@upload-example.com"
 	GCS_BUCKET = "example"
-	Key        = "key"
+	GCS_Key    = "key"
 )
 
 type GCSHandler struct {

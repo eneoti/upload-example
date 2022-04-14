@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 	"upload-example/lib/logger"
 
 	"github.com/stretchr/testify/assert"
@@ -29,7 +30,8 @@ func setupBenchmark(b *testing.B) (*cloudStorageClientMock, *Service, *httptest.
 // Benchmark the uploading data API
 func BenchmarkUploadingAPITest(b *testing.B) {
 	cloudStorageClient, service, w := setupBenchmark(b)
-	cloudStorageClient.On("Upload", mock.Anything, mock.Anything).Return(nil)
+	// assume that the cloudstorage take 01 seconds to hanlde the request.
+	cloudStorageClient.On("Upload", mock.Anything, mock.Anything).After(1 * time.Second).Return(nil)
 	// Make same payload for every request
 	payload, err := ioutil.ReadFile("./data-test/payload.json")
 	if err != nil {

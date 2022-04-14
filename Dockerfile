@@ -11,9 +11,9 @@ RUN make build
 
 # deployment
 FROM alpine:latest
-
-COPY --from=builder /src/upload-example /
+WORKDIR /home/example
+COPY --from=builder /src/upload-example/upload-example ./
 
 EXPOSE 3000
 
-ENTRYPOINT ["/upload-example"]
+ENTRYPOINT ["./upload-example"]

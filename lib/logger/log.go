@@ -13,6 +13,7 @@ type Logger interface {
 	Debugw(msg string, keysAndValues ...interface{})
 	Fatalf(msg string, keysAndValues ...interface{})
 	Errorf(msg string, keysAndValues ...interface{})
+	Infof(msg string, keysAndValues ...interface{})
 }
 
 // Log is the wrap above zap sugar logger
