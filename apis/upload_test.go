@@ -8,7 +8,8 @@ import (
 	"os"
 	"testing"
 	"time"
-	"upload-example/lib/logger"
+
+	"github.com/eneoti/upload-example/lib/logger"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"

@@ -7,9 +7,10 @@ import (
 	"os/signal"
 	"runtime"
 	"syscall"
-	"upload-example/apis"
-	"upload-example/lib/logger"
-	"upload-example/services/cloudstorage"
+
+	"github.com/eneoti/upload-example/apis"
+	"github.com/eneoti/upload-example/lib/logger"
+	"github.com/eneoti/upload-example/services/cloudstorage"
 )
 
 func main() {

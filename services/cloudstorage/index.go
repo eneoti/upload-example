@@ -2,7 +2,8 @@ package cloudstorage
 
 import (
 	"fmt"
-	"upload-example/lib/logger"
+
+	"github.com/eneoti/upload-example/lib/logger"
 
 	"go.uber.org/ratelimit"
 )

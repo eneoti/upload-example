@@ -3,7 +3,8 @@ package cloudstorage
 import (
 	"context"
 	"fmt"
-	"upload-example/lib/logger"
+
+	"github.com/eneoti/upload-example/lib/logger"
 
 	"cloud.google.com/go/storage"
 )

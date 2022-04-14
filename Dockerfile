@@ -12,7 +12,7 @@ RUN make build
 # deployment
 FROM alpine:latest
 WORKDIR /home/example
-COPY --from=builder /src/upload-example/upload-example ./
+COPY --from=builder /src/github.com/eneoti/upload-example/upload-example ./
 
 EXPOSE 3000
 

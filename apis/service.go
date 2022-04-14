@@ -9,8 +9,9 @@ import (
 	"net/http"
 	"sync"
 	"time"
-	"upload-example/lib/logger"
-	"upload-example/services/cloudstorage"
+
+	"github.com/eneoti/upload-example/lib/logger"
+	"github.com/eneoti/upload-example/services/cloudstorage"
 
 	"github.com/go-playground/validator"
 	"github.com/google/uuid"

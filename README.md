@@ -17,7 +17,7 @@ The benchmark will take around 9s to run 100 request.
 ```
 100	  99007572 ns/op	   39115 B/op	     468 allocs/op
 PASS
-ok  	upload-example/apis	9.915s
+ok  	github.com/eneoti/upload-example/apis	9.915s
 ```
 
 The step upload file to S3/GCS will be assumed cost 1s.

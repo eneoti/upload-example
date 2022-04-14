@@ -3,7 +3,8 @@ package cloudstorage
 import (
 	"bytes"
 	"fmt"
-	"upload-example/lib/logger"
+
+	"github.com/eneoti/upload-example/lib/logger"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
